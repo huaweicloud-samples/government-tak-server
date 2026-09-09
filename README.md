@@ -1,31 +1,91 @@
-# government-tak-server
+# 无服务器 TAK Server 华为云方案
 
-[![Status](https://img.shields.io/badge/Status-Incubating-blue)]()
-[![Huawei Cloud](https://img.shields.io/badge/Huawei%20Cloud-Samples-red)]()
-[![Scenario](https://img.shields.io/badge/Scenario-government-success)](https://3ms.huawei.com/docs/docinfo/1300901382590492672?bookstackId=866760814559879168&gid=3591759&l=zh-cn&documentkind=&attachmentIdx=5)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-This solution demonstrates how to deploy a serverless TAK Server (Team Awareness Kit) on Huawei Cloud, achieving high availability, auto-scaling, and cost-optimized collaboration platform.
+## 简介
 
-## Overview
+本方案展示如何在华为云上部署无服务器 TAK Server (Team Awareness Kit)，实现高可用、自动扩展且成本优化的协作平台。
 
-This repository is created from the huaweicloud-samples automated repository request workflow.
+TAK 是一种情境感知和地理空间协作软件，最初为军事行动创建，现已广泛应用于应急管理、灾害响应、执法和搜救行动。
 
-## Getting Started
+### 核心功能
 
-Add setup, deployment, and verification steps here.
+- **无服务器架构**: 自动扩展的计算和数据库资源
+- **高可用性**: 跨多可用区部署
+- **成本优化**: 按需付费，自动扩展至零
+- **增强安全性**: 网络隔离和密钥管理
 
-## Contributing
+## 方案亮点
 
-Please use pull requests and follow the repository review rules.
+- 云原生容器化部署
+- 自动扩展架构
+- 高可用多AZ设计
+- 简化运维
 
-## License
+## 前置条件
 
-This project is licensed under the MIT-0 license.
+- 华为云账号
+- Docker
+- kubectl
+- helm
 
-## Maintainers
+## 快速开始
 
-CODEOWNERS: @Ferguson2211
+### 1. 创建基础设施
 
-## Feedback
+```bash
+cd infra
+terraform init
+terraform plan
+terraform apply
+```
 
-Please use GitHub Issues: https://github.com/huaweicloud-samples/government-tak-server/issues
+### 2. 构建镜像
+
+```bash
+docker build -t tak-server:latest .
+docker push your-registry/tak-server:latest
+```
+
+### 3. 部署到 CCE
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+## 架构说明
+
+```
+客户端 → 云解析 DNS → 增强型ELB → CCE (TAK容器)
+                                │
+                ┌───────────────┼───────────────┐
+                ▼               ▼               ▼
+            GaussDB          SFS             OBS
+```
+
+详细架构说明请参考 [docs/architecture.md](docs/architecture.md)。
+
+## 涉及云服务
+
+- CCE (云容器引擎)
+- GaussDB (云数据库)
+- SFS (文件存储)
+- 增强型ELB (负载均衡)
+- OBS (对象存储)
+- CSMS (密钥管理)
+- 云解析 DNS
+
+## 清理资源
+
+```bash
+kubectl delete -f deployment.yaml
+terraform destroy
+```
+
+## 许可证
+
+MIT No Attribution - Copyright (c) 2026 Huawei Cloud
+
+## 联系方式
+
+如有问题，请提交 Issue 或联系维护团队。
